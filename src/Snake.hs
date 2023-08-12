@@ -10,50 +10,71 @@ type Snake = [Food]
 cols = 32
 rows = 24
 
-directionVectorMap = Map.fromList $ zip [UP, DOWN, LEFT, RIGHT] 
-                                        [(0, (-1)), (0, 1), ((-1), 0), (1, 0)]
+directionVectorMap :: Map Direction (Int, Int)
+directionVectorMap = Map.fromList 
+    [ (UP, (0, -1))
+    , (DOWN, (0, 1))
+    , (LEFT, (-1, 0))
+    , (RIGHT, (1, 0))
+    ]
 
 move :: Food -> Direction -> Snake -> (Bool, Snake)
-move food direction snake = if wasFoodEaten 
-                            then (True, newHead : snake)
-                            else (False, newHead : init snake)
-    where   wasFoodEaten = newHead == food
-            newHead = directionVectorMap ! direction +: head snake
-            (a, b) +: (c, d) = (a + c, b + d)
+move food direction snake = 
+    if wasFoodEaten 
+        then (True, newHead : snake)
+        else (False, newHead : init snake)
+  where
+    wasFoodEaten = newHead == food
+    newHead = directionVectorMap ! direction +: head snake
+    (a, b) +: (c, d) = (a + c, b + d)
 
 checkGameOver :: Snake -> Bool
-checkGameOver snake =   headX == 0 || headX == cols || 
-                        headY == 0 || headY == rows ||
-                        head' `elem` tail'
-    where   head' = head snake
-            (headX, headY) = head'
-            tail' = tail snake
+checkGameOver snake = 
+    headX == 0 || headX == cols || 
+    headY == 0 || headY == rows ||
+    head' `elem` tail'
+  where
+    (headX, headY) = head snake
+    (head':tail') = snake
 
 generateNewFood :: Snake -> StdGen -> (Food, StdGen)
-generateNewFood snake stdGen =  if newFood `elem` snake
-                                then generateNewFood snake stdGen3
-                                else ((foodX, foodY), stdGen3)
-        where   (foodX, stdGen2) = randomR (1, 31) stdGen
-                (foodY, stdGen3) = randomR (1, 23) stdGen2
-                newFood = (foodX, foodY)
+generateNewFood snake stdGen =  
+    if newFood `elem` snake
+        then generateNewFood snake stdGen3
+        else ((foodX, foodY), stdGen3)
+  where
+    (foodX, stdGen2) = randomR (1, cols - 1) stdGen
+    (foodY, stdGen3) = randomR (1, rows - 1) stdGen2
+    newFood = (foodX, foodY)
 
-data GameState = GameState      { getSnake :: Snake
-                                , getFood :: Food
-                                , getDirection :: Direction
-                                , isGameOver :: Bool
-                                , getRandomStdGen :: StdGen }
+data GameState = GameState 
+    { getSnake :: Snake
+    , getFood :: Food
+    , getDirection :: Direction
+    , isGameOver :: Bool
+    , getRandomStdGen :: StdGen 
+    }
 
 changeDirection :: GameState -> Direction -> GameState
-changeDirection (GameState s f d g r) newDir = GameState s f newDir g r 
+changeDirection gameState newDir = 
+    gameState { getDirection = newDir }
 
-initialGameState gameOver = GameState   { getSnake = [  (snakeX, snakeY), 
-                                                        (snakeX, snakeY - 1), 
-                                                        (snakeX, snakeY - 2), 
-                                                        (snakeX - 1, snakeY - 2), 
-                                                        (snakeX - 2, snakeY - 2)]
-                                        , getFood = (3, 3)
-                                        , getDirection = DOWN
-                                        , isGameOver = gameOver
-                                        , getRandomStdGen = mkStdGen 100 }
-        where   snakeX = cols `div` 2
-                snakeY = rows `div` 2
+initialGameState :: Bool -> GameState
+initialGameState gameOver = 
+    GameState 
+        { getSnake = initialSnake
+        , getFood = (3, 3)
+        , getDirection = DOWN
+        , isGameOver = gameOver
+        , getRandomStdGen = mkStdGen 100
+        }
+  where
+    snakeX = cols `div` 2
+    snakeY = rows `div` 2
+    initialSnake = 
+        [ (snakeX, snakeY)
+        , (snakeX, snakeY - 1)
+        , (snakeX, snakeY - 2)
+        , (snakeX - 1, snakeY - 2)
+        , (snakeX - 2, snakeY - 2)
+        ]
