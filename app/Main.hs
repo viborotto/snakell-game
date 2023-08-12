@@ -43,24 +43,33 @@ pipemarioColor = makeColorI 0 128 0 255
 loadSnakeImage :: IO Picture
 loadSnakeImage = loadBMP "star.bmp"
 
-loadMushroomImage :: IO Picture
-loadMushroomImage = loadBMP "mushroom.bmp"
-
 drawCircle :: Color -> (Float, Float) -> Float -> Picture
 drawCircle cor (tx, ty) radius = color cor $
                                      translate (tx * 20 - 320) (ty * 20 - 240) $
                                      circleSolid radius
 
+-- tentativa de desenhar um circulo com imagem
+drawCircleImage :: Picture -> (Float, Float) -> Float -> Picture
+drawCircleImage img (tx, ty) radius = translate (tx * 20 - 320) (ty * 20 - 240) $ 
+    pictures
+        [ img
+        , circle (radius * 20) -- Multiplica o raio pelo fator de escala
+        ]
+
+loadMushroomImage :: IO Picture
+loadMushroomImage = loadBMP "mushroom.bmp"
+
+-- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA COGUMELO COMO COMIDA
+-- PROBLEMA: loadMushRoom devolve IO Picture e nao Picture
+-- convertToPictureMushroom :: Picture -> (Int, Int) -> Picture
+-- convertToPictureMushroom img (x, y) = drawCircleImage loadMushroomImage (toFloat (x, y)) 0.5
+--     where
+--         toFloat (x, y) = (fromIntegral x, fromIntegral y)
+
 convertToPicture :: Color -> (Int, Int) -> Picture
 convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
     where
         toFloat (x, y) = (fromIntegral x, fromIntegral y)
-
--- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA COGUMELO COMO COMIDA
--- convertToPictureMushroom :: Picture -> (Int, Int) -> Float -> Picture
--- convertToPictureMushroom pic radius (x, y) = desenhaBola (toFloat (x, y)) $ circleSolid radius
---     where
---         toFloat (x, y) = (fromIntegral x, fromIntegral y)
 
 render :: GameState -> Picture
 render gameState = pictures $ shapesContornoJogo ++ fmap (convertToPicture yellow) snake ++
@@ -112,10 +121,6 @@ handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState =    if (isGameOv
                                                                     then initialGameState False
                                                                     else gameState
 handleKeys _ gameState = gameState
-
-
-figura :: String
-figura = "star.bmp"
 
 main :: IO ()
 main = play window background 10 (initialGameState True) render handleKeys update
