@@ -37,23 +37,37 @@ drawCircle color' (tx, ty) radius = color color' $
                                      translate (tx * 20 - 320) (ty * 20 - 240) $
                                      circleSolid radius
 
+convertToPicture :: Color -> (Int, Int) -> Picture
+convertToPicture color' (x, y) = drawCircle color' (toFloat (x, y)) 10
+    where
+        toFloat (x, y) = (fromIntegral x, fromIntegral y)
+
+-- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA ESTRELA
+convertToPictureSnake :: Color -> (Int, Int) -> Picture
+convertToPictureSnake color' (x, y) = drawCircle color' (toFloat (x, y)) 10
+    where
+        toFloat (x, y) = (fromIntegral x, fromIntegral y)
+
+-- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA COGUMELO COMO COMIDA
+convertToPictureMushroom :: Color -> (Int, Int) -> Picture
+convertToPictureMushroom color' (x, y) = drawCircle color' (toFloat (x, y)) 10
+    where
+        toFloat (x, y) = (fromIntegral x, fromIntegral y)
+
 render :: GameState -> Picture
-render gameState = pictures $ shapes ++ fmap (convertToPicture yellow) snake ++
+render gameState = pictures $ shapesContornoJogo ++ fmap (convertToPicture yellow) snake ++
                               fmap (convertToPicture blue) [food] ++
                               [foldr mappend mempty gameOverMessage]
   where snake = getSnake gameState
         food = getFood gameState
-        shapes = [ fillRectangle pipemarioColor (16, 0) (640, 20)
+        shapesContornoJogo = [ fillRectangle pipemarioColor (16, 0) (640, 20)
                  , fillRectangle pipemarioColor (16, 24) (640, 20)
                  , fillRectangle pipemarioColor (0, 12) (20, 480)
                  , fillRectangle pipemarioColor (32, 12) (20, 480) ]
-        convertToPicture :: Color -> (Int, Int) -> Picture
-        convertToPicture color' (x, y) = drawCircle color' (toFloat (x, y)) 10
         fillRectangle color' (tx, ty) (w, h) = color color' $
                                                 scale 1 (-1) $
                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
                                                 rectangleSolid w h
-        toFloat (x, y) = (fromIntegral x, fromIntegral y)
         gameOverMessage = if isGameOver gameState
                           then [color red $
                                 translate (-200) (0) $
