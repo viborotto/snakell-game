@@ -19,6 +19,17 @@ window :: Display
 window = InWindow "Snakell Game" (640, 480) (100, 100)
         -- FullScreen
 
+--Peguei Bola, desenhaBola, criaBola do VIDEO DE GLOSS PROFESSOR EMILIO
+          --((x,y), (vx, vy), p)
+type Bola = ((Float, Float), (Float, Float), Picture)
+
+desenhaBola :: Bola -> Picture
+desenhaBola ((x, y), _, p) =
+  translate x y p
+
+criaBola :: (Float, Float) -> (Float, Float) -> Picture -> Bola
+criaBola coord v p = (coord, v, p)
+
 -- Carrega a imagem de fundo
 loadBackgroundImage :: IO Picture
 loadBackgroundImage = loadBMP "background.bmp"
@@ -32,31 +43,28 @@ pipemarioColor = makeColorI 0 128 0 255
 loadSnakeImage :: IO Picture
 loadSnakeImage = loadBMP "star.bmp"
 
+loadMushroomImage :: IO Picture
+loadMushroomImage = loadBMP "mushroom.bmp"
+
 drawCircle :: Color -> (Float, Float) -> Float -> Picture
-drawCircle color' (tx, ty) radius = color color' $
+drawCircle cor (tx, ty) radius = color cor $
                                      translate (tx * 20 - 320) (ty * 20 - 240) $
                                      circleSolid radius
 
 convertToPicture :: Color -> (Int, Int) -> Picture
-convertToPicture color' (x, y) = drawCircle color' (toFloat (x, y)) 10
-    where
-        toFloat (x, y) = (fromIntegral x, fromIntegral y)
-
--- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA ESTRELA
-convertToPictureSnake :: Color -> (Int, Int) -> Picture
-convertToPictureSnake color' (x, y) = drawCircle color' (toFloat (x, y)) 10
+convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
     where
         toFloat (x, y) = (fromIntegral x, fromIntegral y)
 
 -- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA COGUMELO COMO COMIDA
-convertToPictureMushroom :: Color -> (Int, Int) -> Picture
-convertToPictureMushroom color' (x, y) = drawCircle color' (toFloat (x, y)) 10
-    where
-        toFloat (x, y) = (fromIntegral x, fromIntegral y)
+-- convertToPictureMushroom :: Picture -> (Int, Int) -> Float -> Picture
+-- convertToPictureMushroom pic radius (x, y) = desenhaBola (toFloat (x, y)) $ circleSolid radius
+--     where
+--         toFloat (x, y) = (fromIntegral x, fromIntegral y)
 
 render :: GameState -> Picture
 render gameState = pictures $ shapesContornoJogo ++ fmap (convertToPicture yellow) snake ++
-                              fmap (convertToPicture blue) [food] ++
+                              fmap (convertToPicture red) [food] ++
                               [foldr mappend mempty gameOverMessage]
   where snake = getSnake gameState
         food = getFood gameState
@@ -64,23 +72,23 @@ render gameState = pictures $ shapesContornoJogo ++ fmap (convertToPicture yello
                  , fillRectangle pipemarioColor (16, 24) (640, 20)
                  , fillRectangle pipemarioColor (0, 12) (20, 480)
                  , fillRectangle pipemarioColor (32, 12) (20, 480) ]
-        fillRectangle color' (tx, ty) (w, h) = color color' $
+        fillRectangle cor (tx, ty) (w, h) = color cor $
                                                 scale 1 (-1) $
                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
                                                 rectangleSolid w h
         gameOverMessage = if isGameOver gameState
-                          then [color red $
-                                translate (-200) (0) $
+                          then [color black $
+                                translate (-200) 0 $
                                 scale 0.5 0.5 $
                                 text "GAME OVER",
-                                color red $
+                                color black $
                                 translate (-175) (-50) $
                                 scale 0.2 0.2 $
                                 text "Press SPACE to try again."]
                           else []
 
 update :: Float -> GameState -> GameState
-update seconds gameState =  if (gameOver)
+update seconds gameState =  if gameOver
                             then gameState
                             else GameState newSnake newFood' direction newGameOver newStdGen
     where   snake = getSnake gameState
