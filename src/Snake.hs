@@ -53,6 +53,7 @@ data GameState = GameState
     , getDirection :: Direction
     , isGameOver :: Bool
     , getRandomStdGen :: StdGen 
+    , getScore :: Int   -- Adicione o campo de pontuação
     }
 
 changeDirection :: GameState -> Direction -> GameState
@@ -67,6 +68,7 @@ initialGameState gameOver =
         , getDirection = DOWN
         , isGameOver = gameOver
         , getRandomStdGen = mkStdGen 100
+        , getScore = 0   -- Inicialize a pontuação como 0
         }
   where
     snakeX = cols `div` 2

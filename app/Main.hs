@@ -93,24 +93,30 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                                 color black $
                                 translate (-175) (-50) $
                                 scale 0.2 0.2 $
-                                text "Press SPACE to try again."]
+                                text "Press SPACE to try again.",
+								color white $
+								translate (-175) (-100) $
+            					scale 0.3 0.3 $
+            					text ("Score: " ++ show (getScore gameState))]
                           else []
 
 update :: Float -> GameState -> GameState
-update seconds gameState =  if gameOver
-                            then gameState
-                            else GameState newSnake newFood' direction newGameOver newStdGen
-    where   snake = getSnake gameState
-            food = getFood gameState
-            direction = getDirection gameState
-            gameOver = isGameOver gameState
-            stdGen = getRandomStdGen gameState
-            (wasFoodEaten, newSnake) = move food direction snake
-            (newFood, newStdGen) = generateNewFood newSnake stdGen
-            newFood' =  if wasFoodEaten
-                        then newFood
-                        else food
-            newGameOver = checkGameOver newSnake
+update seconds gameState
+    | gameOver = gameState
+    | wasFoodEaten = GameState newSnake newFood' direction newGameOver newStdGen (getScore gameState + 1)
+    | otherwise = GameState newSnake newFood' direction newGameOver newStdGen (getScore gameState)
+    where
+        snake = getSnake gameState
+        food = getFood gameState
+        direction = getDirection gameState
+        gameOver = isGameOver gameState
+        stdGen = getRandomStdGen gameState
+        (wasFoodEaten, newSnake) = move food direction snake
+        (newFood, newStdGen) = generateNewFood newSnake stdGen
+        newFood' = if wasFoodEaten
+                   then newFood
+                   else food
+        newGameOver = checkGameOver newSnake
 
 handleKeys :: Event -> GameState -> GameState
 handleKeys (EventKey (SpecialKey KeyLeft ) Down _ _) gameState = changeDirection gameState LEFT
