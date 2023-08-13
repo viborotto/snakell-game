@@ -72,7 +72,7 @@ convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
         toFloat (x, y) = (fromIntegral x, fromIntegral y)
 
 render :: GameState -> Picture
-render gameState = pictures $ shapesContornoJogo ++ fmap (convertToPicture yellow) snake ++
+render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
                               fmap (convertToPicture red) [food] ++
                               [foldr mappend mempty gameOverMessage]
   where snake = getSnake gameState
