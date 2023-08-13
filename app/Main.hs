@@ -30,12 +30,6 @@ desenhaBola ((x, y), _, p) =
 criaBola :: (Float, Float) -> (Float, Float) -> Picture -> Bola
 criaBola coord v p = (coord, v, p)
 
-background :: Color
-background = makeColorI 135 206 235 255
-
-loadBackgroundImage :: IO Picture
-loadBackgroundImage = loadBMP "sky.bmp"
-
 pipemarioColor :: Color
 pipemarioColor = makeColorI 0 128 0 255
 
@@ -127,7 +121,18 @@ handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState =    if (isGameOv
                                                                     else gameState
 handleKeys _ gameState = gameState
 
+loadBackgroundImage :: IO Picture
+loadBackgroundImage = loadBMP "sky.bmp"
+
+background :: Color
+background = makeColorI 135 206 235 255
+
 main :: IO ()
 main = do
-	play window background 10 (initialGameState True) render handleKeys update
-
+	imageBg <- loadBackgroundImage
+		display window background $ pictures
+        	[ translate (-320) (-240) imageBg
+        	, render initialGameState
+        	]
+    	-- let backgroundImg = pictureOfBitmap imageBg
+    	play window background 10 (initialGameState True) render handleKeys update

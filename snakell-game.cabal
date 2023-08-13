@@ -35,7 +35,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
-    , gloss ==1.13.2.2
+    , gloss
     , mtl
     , random >=1.2.1
     , transformers
@@ -51,7 +51,7 @@ executable snakell-game-exe
   build-depends:
       base >=4.7 && <5
     , containers
-    , gloss ==1.13.2.2
+    , gloss
     , mtl
     , random >=1.2.1
     , snakell-game
@@ -69,7 +69,7 @@ test-suite snakell-game-test
   build-depends:
       base >=4.7 && <5
     , containers
-    , gloss ==1.13.2.2
+    , gloss
     , mtl
     , random >=1.2.1
     , snakell-game

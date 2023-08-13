@@ -22,10 +22,11 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - random >= 1.2.1
-- gloss == 1.13.2.2
+- gloss
 - containers
 - transformers
 - mtl
+# - gloss-juicy
 
 ghc-options:
 - -Wall
