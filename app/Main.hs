@@ -129,10 +129,4 @@ background = makeColorI 135 206 235 255
 
 main :: IO ()
 main = do
-	imageBg <- loadBackgroundImage
-		display window background $ pictures
-        	[ translate (-320) (-240) imageBg
-        	, render initialGameState
-        	]
-    	-- let backgroundImg = pictureOfBitmap imageBg
-    	play window background 10 (initialGameState True) render handleKeys update
+	play window background 10 (initialGameState True) render handleKeys update
