@@ -96,8 +96,7 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
 update :: Float -> GameState -> GameState
 update seconds gameState
     | gameOver = gameState
-    | wasFoodEaten = GameState newSnake newFood' direction newGameOver newStdGen (getScore gameState + 1)
-    | otherwise = GameState newSnake newFood' direction newGameOver newStdGen (getScore gameState)
+    | otherwise = newGameState
     where
         snake = getSnake gameState
         food = getFood gameState
@@ -110,6 +109,11 @@ update seconds gameState
                    then newFood
                    else food
         newGameOver = checkGameOver newSnake
+        newScore = if wasFoodEaten
+                   then getScore gameState + 1
+                   else getScore gameState
+        newGameState = GameState newSnake newFood' direction newGameOver newStdGen newScore
+
 
 handleKeys :: Event -> GameState -> GameState
 handleKeys (EventKey (SpecialKey KeyLeft ) Down _ _) gameState = changeDirection gameState LEFT
