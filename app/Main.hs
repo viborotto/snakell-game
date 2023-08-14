@@ -116,13 +116,26 @@ update seconds gameState
 
 
 handleKeys :: Event -> GameState -> GameState
-handleKeys (EventKey (SpecialKey KeyLeft ) Down _ _) gameState = changeDirection gameState LEFT
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gameState = changeDirection gameState RIGHT
-handleKeys (EventKey (SpecialKey KeyUp   ) Down _ _) gameState = changeDirection gameState DOWN
-handleKeys (EventKey (SpecialKey KeyDown ) Down _ _) gameState = changeDirection gameState UP
-handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState =    if (isGameOver gameState)
-                                                                    then initialGameState False
-                                                                    else gameState
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gameState =
+    if getDirection gameState /= RIGHT
+        then changeDirection gameState LEFT
+        else gameState
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gameState =
+    if getDirection gameState /= LEFT
+        then changeDirection gameState RIGHT
+        else gameState
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gameState =
+    if getDirection gameState /= UP
+        then changeDirection gameState DOWN
+        else gameState
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState =
+    if getDirection gameState /= DOWN
+        then changeDirection gameState UP
+        else gameState
+handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState =
+    if isGameOver gameState
+        then initialGameState False
+        else gameState
 handleKeys _ gameState = gameState
 
 loadBackgroundImage :: IO Picture
@@ -133,4 +146,6 @@ background = makeColorI 135 206 235 255
 
 main :: IO ()
 main = do
-	play window background 10 (initialGameState True) render handleKeys update
+    play window background 10 (initialGameState True) render handleKeys update
+    
+    

@@ -5,13 +5,13 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           snakell-game
-version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/snakell-game#readme>
-homepage:       https://github.com/githubuser/snakell-game#readme
-bug-reports:    https://github.com/githubuser/snakell-game/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2023 Author name here
+version:        1.0.0.0
+description:    Please see the README on GitHub at <https://github.com/ufabc-bcc/23-q2-paradigmas-projetos-snakell#readme>
+homepage:       https://github.com/ufabc-bcc/23-q2-paradigmas-projetos-snakell#readme
+bug-reports:    https://github.com/ufabc-bcc/23-q2-paradigmas-projetos-snakell/issues
+author:         David & Vittoria
+maintainer:     david.pianura@aluno.ufabc.edu.br & vittoria.borotto@aluno.ufabc.edu.br
+copyright:      2023 David & Vittoria
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/snakell-game
+  location: https://github.com/ufabc-bcc/23-q2-paradigmas-projetos-snakell
 
 library
   exposed-modules:
