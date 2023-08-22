@@ -1,6 +1,6 @@
 # snakell-game 🐍🕹
 
-Projeto realizado para avaliação da disciplica de Paradigmas de Programação do cusRo de Bacharel em Ciências e Tecnologia da UFABC. 
+Projeto realizado para avaliação da disciplica de Paradigmas de Programação do curso de Bacharel em Ciências da Computação da UFABC. 
 
 🎯**Objetivo:** aplicar conceitos aprendidos ao longo das aulas, bem como recursos da linguagem de programação Haskell e o paradigma funcional para implementar o jogo da cobrinha(Snake game 🐍).
 
