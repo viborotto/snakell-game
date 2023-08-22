@@ -10,10 +10,10 @@ Projeto realizado para avaliação da disciplica de Paradigmas de Programação 
 
 **Video do funcionamento**: <link>
 
-**Como Utilizar**
-    - stack build
-    - stack run
+**Como Utilizar**           
+- stack build
+- stack run
     - ⌨️**Comandos**
       - ⬅️➡️⬆️⬇️ : setas do teclado para locomover a 🐍
-    - O jogo consiste em comer a comida e ir crescendo o tamanho da cobrinha, sem bater no próprio corpo ou nas paredes do jogo
+- O jogo consiste em comer a comida e ir crescendo o tamanho da cobrinha, sem bater no próprio corpo ou nas paredes do jogo
 
