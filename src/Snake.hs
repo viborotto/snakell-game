@@ -3,7 +3,9 @@ module Snake where
 import Data.Map as Map
 import System.Random
 
-data Direction = UP | DOWN | LEFT | RIGHT deriving (Eq, Ord)
+data Direction = UP | DOWN | LEFT | RIGHT 
+    deriving (Eq, Ord)
+
 type Food = (Int, Int)
 type Snake = [Food]
 
@@ -18,8 +20,8 @@ directionVectorMap = Map.fromList
     , (RIGHT, (1, 0))
     ]
 
-move :: Food -> Direction -> Snake -> (Bool, Snake)
-move food direction snake = 
+move :: Direction -> Food -> Snake -> (Bool, Snake)
+move direction food snake = 
     if wasFoodEaten 
         then (True, newHead : snake)
         else (False, newHead : init snake)
@@ -37,10 +39,10 @@ checkGameOver snake =
     (headX, headY) = head snake
     (head':tail') = snake
 
-generateNewFood :: Snake -> StdGen -> (Food, StdGen)
-generateNewFood snake stdGen =  
+generateNewFood :: StdGen -> Snake -> (Food, StdGen)
+generateNewFood stdGen snake =  
     if newFood `elem` snake
-        then generateNewFood snake stdGen3
+        then generateNewFood stdGen3 snake
         else ((foodX, foodY), stdGen3)
   where
     (foodX, stdGen2) = randomR (1, cols - 1) stdGen
@@ -53,7 +55,7 @@ data GameState = GameState
     , getDirection :: Direction
     , isGameOver :: Bool
     , getRandomStdGen :: StdGen 
-    , getScore :: Int   -- Adicione o campo de pontuação
+    , getScore :: Int   -- campo de pontuação
     }
 
 changeDirection :: GameState -> Direction -> GameState

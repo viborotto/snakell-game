@@ -103,8 +103,8 @@ update seconds gameState
         direction = getDirection gameState
         gameOver = isGameOver gameState
         stdGen = getRandomStdGen gameState
-        (wasFoodEaten, newSnake) = move food direction snake
-        (newFood, newStdGen) = generateNewFood newSnake stdGen
+        (wasFoodEaten, newSnake) = move direction food snake
+        (newFood, newStdGen) = generateNewFood stdGen newSnake
         newFood' = if wasFoodEaten
                    then newFood
                    else food
