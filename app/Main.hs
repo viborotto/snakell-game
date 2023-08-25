@@ -1,4 +1,4 @@
-module Main where
+module Main (main) where
 
 import Snake
 import Graphics.Gloss
@@ -21,14 +21,6 @@ window = InWindow "Snakell Game" (640, 480) (100, 100)
 
 --Peguei Bola, desenhaBola, criaBola do VIDEO DE GLOSS PROFESSOR EMILIO
           --((x,y), (vx, vy), p)
-type Bola = ((Float, Float), (Float, Float), Picture)
-
-desenhaBola :: Bola -> Picture
-desenhaBola ((x, y), _, p) =
-  translate x y p
-
-criaBola :: (Float, Float) -> (Float, Float) -> Picture -> Bola
-criaBola coord v p = (coord, v, p)
 
 pipemarioColor :: Color
 pipemarioColor = makeColorI 0 128 0 255
@@ -62,7 +54,7 @@ loadMushroomImage = loadBMP "mushroom.bmp"
 convertToPicture :: Color -> (Int, Int) -> Picture
 convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
     where
-        toFloat (x, y) = (fromIntegral x, fromIntegral y)
+        toFloat (coordX, coordY) = (fromIntegral coordX, fromIntegral coordY)
 
 render :: GameState -> Picture
 render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
@@ -87,14 +79,14 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                                 translate (-175) (-50) $
                                 scale 0.2 0.2 $
                                 text "Press SPACE to try again.",
-								color white $
-								translate (-175) (-100) $
-            					scale 0.3 0.3 $
-            					text ("Score: " ++ show (getScore gameState))]
+                                color (makeColorI 0 128 0 255) $
+                                translate (-175) (-100) $
+                                scale 0.3 0.3 $
+                                text ("Score: " ++ show (getScore gameState))]
                           else []
 
 update :: Float -> GameState -> GameState
-update seconds gameState
+update _ gameState
     | gameOver = gameState
     | otherwise = newGameState
     where
