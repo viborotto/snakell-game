@@ -4,23 +4,21 @@ import Snake
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 
-data GameMessage = GameOverMessage Picture | TryAgainMessage Picture
+data GameMessage = GameOverMessage Picture | TryAgainMessage Picture | WelcomeMessage Picture
 
 instance Semigroup GameMessage where
+    (WelcomeMessage pic1) <> _ = WelcomeMessage pic1
+    _ <> (WelcomeMessage pic2) = WelcomeMessage pic2
     (TryAgainMessage pic1) <> (TryAgainMessage pic2) = TryAgainMessage (pic1 <> pic2)
     (GameOverMessage pic1) <> (GameOverMessage pic2) = GameOverMessage (pic1 <> pic2)
     (TryAgainMessage pic1) <> (GameOverMessage pic2) = TryAgainMessage (pic1 <> pic2)
     (GameOverMessage pic1) <> (TryAgainMessage pic2) = TryAgainMessage (pic1 <> pic2)
 
 instance Monoid GameMessage where
-    mempty = GameOverMessage blank
+    mempty = WelcomeMessage blank
 
 window :: Display
 window = InWindow "Snakell Game" (640, 480) (100, 100)
-        -- FullScreen
-
---Peguei Bola, desenhaBola, criaBola do VIDEO DE GLOSS PROFESSOR EMILIO
-          --((x,y), (vx, vy), p)
 
 pipemarioColor :: Color
 pipemarioColor = makeColorI 0 128 0 255
@@ -33,33 +31,46 @@ drawCircle cor (tx, ty) radius = color cor $
                                      translate (tx * 20 - 320) (ty * 20 - 240) $
                                      circleSolid radius
 
--- tentativa de desenhar um circulo com imagem
-drawCircleImage :: Picture -> (Float, Float) -> Float -> Picture
-drawCircleImage img (tx, ty) radius = translate (tx * 20 - 320) (ty * 20 - 240) $ 
-    pictures
-        [ img
-        , circle (radius * 20) -- Multiplica o raio pelo fator de escala
-        ]
-
-loadMushroomImage :: IO Picture
-loadMushroomImage = loadBMP "mushroom.bmp"
-
--- TODO: FAZER UMA FUNCAO QUE DESENHE O CIRCULO COM A IMAGEM DA COGUMELO COMO COMIDA
--- PROBLEMA: loadMushRoom devolve IO Picture e nao Picture
--- convertToPictureMushroom :: Picture -> (Int, Int) -> Picture
--- convertToPictureMushroom img (x, y) = drawCircleImage loadMushroomImage (toFloat (x, y)) 0.5
---     where
---         toFloat (x, y) = (fromIntegral x, fromIntegral y)
-
 convertToPicture :: Color -> (Int, Int) -> Picture
 convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
     where
         toFloat (coordX, coordY) = (fromIntegral coordX, fromIntegral coordY)
 
+-- render :: GameState -> Picture
+-- render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
+--                               fmap (convertToPicture red) [food] ++
+--                               [foldr mappend mempty gameOverMessage]
+--   where snake = getSnake gameState
+--         food = getFood gameState
+--         shapesContornoJogo = [ fillRectangle pipemarioColor (16, 0) (640, 20)
+--                  , fillRectangle pipemarioColor (16, 24) (640, 20)
+--                  , fillRectangle pipemarioColor (0, 12) (20, 480)
+--                  , fillRectangle pipemarioColor (32, 12) (20, 480) ]
+--         fillRectangle cor (tx, ty) (w, h) = color cor $
+--                                                 scale 1 (-1) $
+--                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
+--                                                 rectangleSolid w h
+        -- gameOverMessage = if isGameOver gameState
+        --                   then [color black $
+        --                         translate (-200) 0 $
+        --                         scale 0.5 0.5 $
+        --                         text "GAME OVER",
+        --                         color black $
+        --                         translate (-175) (-50) $
+        --                         scale 0.2 0.2 $
+        --                         text "PRESS SPACE TO TRY AGAIN.",
+        --                         color (makeColorI 0 128 0 255) $
+        --                         translate (-175) (-100) $
+        --                         scale 0.3 0.3 $
+        --                         text ("Score: " ++ show (getScore gameState))]
+        --                   else []
+
+
 render :: GameState -> Picture
 render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
                               fmap (convertToPicture red) [food] ++
-                              [foldr mappend mempty gameOverMessage]
+                              [foldr mappend mempty gameMessage]
+
   where snake = getSnake gameState
         food = getFood gameState
         shapesContornoJogo = [ fillRectangle pipemarioColor (16, 0) (640, 20)
@@ -70,6 +81,13 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                                                 scale 1 (-1) $
                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
                                                 rectangleSolid w h
+        
+        gameMessage = if isGameOver gameState
+                  then gameOverMessage
+                  else if isNewGame gameState
+                       then welcomeMessage
+                       else []
+
         gameOverMessage = if isGameOver gameState
                           then [color black $
                                 translate (-200) 0 $
@@ -83,12 +101,24 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                                 translate (-175) (-100) $
                                 scale 0.3 0.3 $
                                 text ("Score: " ++ show (getScore gameState))]
-                          else []
+                        else []
+
+        welcomeMessage = [color black $
+                        translate (-200) 0 $
+                        scale 0.2 0.2 $
+                        text "WELCOME TO SNAKELL",
+                        color black $
+                        translate (-175) (-50) $
+                        scale 0.2 0.2 $
+                        text "PRESS SPACE TO PLAY"]
+
+        isNewGame = not . isGameOver
 
 update :: Float -> GameState -> GameState
 update _ gameState
+    | isNewGame gameState = gameState
     | gameOver = gameState
-    | otherwise = newGameState
+    | otherwise = newGameState (isNewGame gameState) -- Pass the isNewGame field as an argument
     where
         snake = getSnake gameState
         food = getFood gameState
@@ -126,10 +156,15 @@ handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState
     | getDirection gameState /= DOWN = changeDirection gameState UP
     | otherwise                      =  gameState
 
+-- handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
+--     | isGameOver gameState = initialGameState False
+--     | otherwise            = gameState
+
 handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
+    | isNewGame gameState = gameState { isNewGame = False }
     | isGameOver gameState = initialGameState False
-    | otherwise            = gameState
-        
+    | otherwise = gameState
+
 handleKeys _ gameState = gameState
 
 loadBackgroundImage :: IO Picture
@@ -140,6 +175,6 @@ background = makeColorI 135 206 235 255
 
 main :: IO ()
 main = do
-    play window background 10 (initialGameState True) render handleKeys update
+    play window background 10 newGameGameState render handleKeys update
     
     

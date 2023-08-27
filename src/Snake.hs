@@ -6,6 +6,7 @@ module Snake
     , move
     , checkGameOver
     , getNewFood
+    , newGameGameState
     ) where
 
 import Data.Map as Map
@@ -34,6 +35,7 @@ data GameState = GameState
     , isGameOver :: Bool
     , getRandomStdGen :: StdGen
     , getScore :: Int
+    , isNewGame :: Bool
     }
 
 {--CONSTANTES--}
@@ -53,8 +55,8 @@ directionVectorMap = Map.fromList
 
 -- Define a mudança de direção no estado do jogo
 changeDirection :: GameState -> Direction -> GameState
-changeDirection (GameState snake food _ isGameOver randomGen score) newDir =
-    GameState snake food newDir isGameOver randomGen score
+changeDirection (GameState snake food dir gameOver randomGen score isNewGame) newDir =
+    GameState snake food newDir gameOver randomGen score isNewGame
 
 -- move: responsável por atualizar a posição da cobra no jogo, com base na 
 -- direção de movimento fornecida, e também verificar se a cobra comeu a comida presente na sua nova posição.
@@ -77,7 +79,7 @@ checkGameOver (cabeca:cauda) =
     (cabecaX == 0 || cabecaX == cols) || (cabecaY == 0 || cabecaY == rows) || cabeca `elem` cauda
   where
     (cabecaX, cabecaY) = cabeca
-    
+
 -- Gera uma nova posição para a comida que não esteja na cobra
 -- Se a posição da comida coincidir com alguma do corpo da cobra, a função é chamada novamente
 getNewFood :: StdGen -> Snake -> (Food, StdGen)
@@ -98,6 +100,7 @@ initialGameState gameOver =
         , isGameOver = gameOver
         , getRandomStdGen = mkStdGen 100
         , getScore = 0
+        , isNewGame = True
         }
   where
     snakeX = cols `div` 2
@@ -110,3 +113,24 @@ initialGameState gameOver =
         , (snakeX - 2, snakeY - 2)
         ]
 
+newGameGameState :: GameState
+newGameGameState =
+    GameState
+        { getSnake = initialSnake
+        , getFood = (3, 3)
+        , getDirection = DOWN
+        , isGameOver = False  -- Inicialmente, o jogo não está encerrado
+        , getRandomStdGen = mkStdGen 100
+        , getScore = 0
+        , isNewGame = True
+        }
+  where
+    snakeX = cols `div` 2
+    snakeY = rows `div` 2
+    initialSnake =
+        [ (snakeX, snakeY)
+        , (snakeX, snakeY - 1)
+        , (snakeX, snakeY - 2)
+        , (snakeX - 1, snakeY - 2)
+        , (snakeX - 2, snakeY - 2)
+        ]
