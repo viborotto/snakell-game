@@ -5,11 +5,13 @@ module Snake
     , changeDirection
     , move
     , checkGameOver
-    , generateNewFood
+    , getNewFood
     ) where
 
 import Data.Map as Map
 import System.Random
+
+{-- ADT e TYPES --}
 
 -- Define a direção do movimento da cobra
 data Direction = UP | DOWN | LEFT | RIGHT
@@ -20,62 +22,9 @@ type Food = (Int, Int)
 
 -- Define cada parte do corpo da cobra, com suas cordenadas 
 type SnakeBody = (Int, Int)
+
 -- Define o tipo para representar a cobra
 type Snake = [SnakeBody]
-
--- Definições de constantes para as dimensões do jogo
-cols, rows :: Int
-cols = 32
-rows = 24
-
--- Mapeia direções para vetores de deslocamento
-directionVectorMap :: Map Direction (Int, Int)
-directionVectorMap = Map.fromList
-    [ (UP, (0, -1))
-    , (DOWN, (0, 1))
-    , (LEFT, (-1, 0))
-    , (RIGHT, (1, 0))
-    ]
-
--- Move a cobra de acordo com a direção e a posição da comida
-move :: Direction -> Food -> Snake -> (Bool, Snake)
-move direction food snake =
-    if wasFoodEaten
-        then (True, newHead : snake)
-        else (False, newHead : init snake)
-  where
-    wasFoodEaten = newHead == food
-    newHead = directionVectorMap ! direction +: head snake
-    (a, b) +: (c, d) = (a + c, b + d)
-
--- Verifica se o jogo terminou devido a colisão ou saída dos limites
-checkGameOver :: Snake -> Bool
-checkGameOver [] = True
-checkGameOver snake =
-    headX == 0 || headX == cols ||
-    headY == 0 || headY == rows ||
-    head' `elem` tail'
-  where
-    (headX, headY) = head snake
-    (head':tail') = snake
-
--- Gera uma nova posição para a comida que não esteja na cobra
-generateNewFood :: StdGen -> Snake -> (Food, StdGen)
-generateNewFood stdGen snake =
-    if newFood `elem` snake
-        then generateNewFood stdGen3 snake
-        else ((foodX, foodY), stdGen3)
-  where
-    (foodX, stdGen2) = randomR (1, cols - 1) stdGen
-    (foodY, stdGen3) = randomR (1, rows - 1) stdGen2
-    newFood = (foodX, foodY)
-
-
-
--- Define a mudança de direção no estado do jogo
-changeDirection :: GameState -> Direction -> GameState
-changeDirection gameState newDir =
-    gameState { getDirection = newDir }
 
 -- Define os a estrutura de estados do jogo
 data GameState = GameState
@@ -87,8 +36,60 @@ data GameState = GameState
     , getScore :: Int
     }
 
+{--CONSTANTES--}
+cols, rows :: Int
+cols = 32
+rows = 24
+
+{--FUNCOES--}
+-- Mapeia direções para vetores de deslocamento, o Map aqui funciona em um sistema de chave e valor
+directionVectorMap :: Map Direction (Int, Int)
+directionVectorMap = Map.fromList
+    [ (UP, (0, -1))
+    , (DOWN, (0, 1))
+    , (LEFT, (-1, 0))
+    , (RIGHT, (1, 0))
+    ]
+
+-- Define a mudança de direção no estado do jogo
+changeDirection :: GameState -> Direction -> GameState
+changeDirection (GameState snake food _ isGameOver randomGen score) newDir =
+    GameState snake food newDir isGameOver randomGen score
+
+-- move: responsável por atualizar a posição da cobra no jogo, com base na 
+-- direção de movimento fornecida, e também verificar se a cobra comeu a comida presente na sua nova posição.
+move :: Direction -> Food -> Snake -> (Bool, Snake)
+move direction food snake
+    | comeu        = (True, newSnake)
+    | otherwise    = (False, newSnake)
+  where
+    (a, b) += (c, d) = (a + c, b + d)
+    comeu = newHead == food
+    newHead = (directionVectorMap ! direction) += head snake
+    newSnake
+        | comeu     = newHead : snake
+        | otherwise = newHead : init snake
+
+-- Verifica se o jogo terminou devido a colisão ou saída dos limites
+checkGameOver :: Snake -> Bool
+checkGameOver [] = True
+checkGameOver (cabeca:cauda) =
+    (cabecaX == 0 || cabecaX == cols) || (cabecaY == 0 || cabecaY == rows) || cabeca `elem` cauda
+  where
+    (cabecaX, cabecaY) = cabeca
+    
+-- Gera uma nova posição para a comida que não esteja na cobra
+-- Se a posição da comida coincidir com alguma do corpo da cobra, a função é chamada novamente
+getNewFood :: StdGen -> Snake -> (Food, StdGen)
+getNewFood stdGen snake
+    | (posX, posY) `elem` snake = getNewFood newGen2 snake
+    | otherwise                 = ((posX, posY), newGen2)
+  where
+    (posX, newGen) = randomR (1, cols - 1) stdGen
+    (posY, newGen2) = randomR (1, rows - 1) newGen
+
+
 -- Define o estado inicial do jogo
-initialGameState :: Bool -> GameState
 initialGameState gameOver =
     GameState
         { getSnake = initialSnake
@@ -108,3 +109,4 @@ initialGameState gameOver =
         , (snakeX - 1, snakeY - 2)
         , (snakeX - 2, snakeY - 2)
         ]
+

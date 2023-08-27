@@ -78,7 +78,7 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                                 color black $
                                 translate (-175) (-50) $
                                 scale 0.2 0.2 $
-                                text "Press SPACE to try again.",
+                                text "PRESS SPACE TO TRY AGAIN.",
                                 color (makeColorI 0 128 0 255) $
                                 translate (-175) (-100) $
                                 scale 0.3 0.3 $
@@ -96,7 +96,7 @@ update _ gameState
         gameOver = isGameOver gameState
         stdGen = getRandomStdGen gameState
         (wasFoodEaten, newSnake) = move direction food snake
-        (newFood, newStdGen) = generateNewFood stdGen newSnake
+        (newFood, newStdGen) = getNewFood stdGen newSnake
         newFood' = if wasFoodEaten
                    then newFood
                    else food
@@ -107,27 +107,29 @@ update _ gameState
         newGameState = GameState newSnake newFood' direction newGameOver newStdGen newScore
 
 
+-- https://hackage.haskell.org/package/gloss-1.1.1.0/docs/Graphics-Gloss-Game.html
+-- EventKey Key KeyState Modifiers (Float, Float)
 handleKeys :: Event -> GameState -> GameState
-handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gameState =
-    if getDirection gameState /= RIGHT
-        then changeDirection gameState LEFT
-        else gameState
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gameState =
-    if getDirection gameState /= LEFT
-        then changeDirection gameState RIGHT
-        else gameState
-handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gameState =
-    if getDirection gameState /= UP
-        then changeDirection gameState DOWN
-        else gameState
-handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState =
-    if getDirection gameState /= DOWN
-        then changeDirection gameState UP
-        else gameState
-handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState =
-    if isGameOver gameState
-        then initialGameState False
-        else gameState
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gameState
+    | getDirection gameState /= RIGHT = changeDirection gameState LEFT
+    | otherwise                       = gameState
+
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gameState
+    | getDirection gameState /= LEFT = changeDirection gameState RIGHT
+    | otherwise                      = gameState
+
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gameState
+    | getDirection gameState /= UP = changeDirection gameState DOWN
+    | otherwise                    =  gameState
+
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState
+    | getDirection gameState /= DOWN = changeDirection gameState UP
+    | otherwise                      =  gameState
+
+handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
+    | isGameOver gameState = initialGameState False
+    | otherwise            = gameState
+        
 handleKeys _ gameState = gameState
 
 loadBackgroundImage :: IO Picture
