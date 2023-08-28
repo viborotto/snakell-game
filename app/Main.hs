@@ -1,23 +1,8 @@
 module Main (main) where
 
 import Snake
-import Graphics.Gloss
-    ( black,
-      red,
-      yellow,
-      blank,
-      circleSolid,
-      color,
-      pictures,
-      rectangleSolid,
-      scale,
-      text,
-      translate,
-      play,
-      makeColorI,
-      Display(InWindow),
-      Color,
-      Picture )
+import Graphics.Gloss ()
+    
 import Graphics.Gloss.Interface.Pure.Game
 
 -- import Call -- Import the call library
@@ -104,7 +89,7 @@ render gameState = pictures $ [drawHaskellLogo, cloud1, cloud2, cloud3, cloud4, 
                                 translate (-175) (-100) $
                                 scale 0.3 0.3 $
                                 text ("Score: " ++ show (getScore gameState)),
-                                color (makeColorI 0 128 0 255) $
+                                color violet $
                                 translate (-175) (-150) $
                                 scale 0.2 0.2 $
                                 text ("Best Score: " ++ show (getBestScore gameState))]
@@ -154,7 +139,6 @@ update _ gameState
         newBestScore = if newScore > getBestScore gameState
                        then newScore
                        else getBestScore gameState
-        newGameState = GameState newSnake newFood' direction newGameOver newStdGen newScore
 
 
 -- https://hackage.haskell.org/package/gloss-1.1.1.0/docs/Graphics-Gloss-Game.html
