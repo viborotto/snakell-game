@@ -41,6 +41,7 @@ data GameState = GameState
     , getRandomStdGen :: StdGen
     , getScore :: Int
     , isNewGame :: Bool
+    , getBestScore :: Int  -- Add the bestScore field
     }
 
 {--CONSTANTES--}
@@ -60,8 +61,8 @@ directionVectorMap = Map.fromList
 
 -- Define a mudança de direção no estado do jogo
 changeDirection :: GameState -> Direction -> GameState
-changeDirection (GameState snake food _ gameOver randomGen score novoJogo) newDir =
-    GameState snake food newDir gameOver randomGen score novoJogo
+changeDirection (GameState snake food _ gameOver randomGen score novoJogo newBestScore) newDir =
+    GameState snake food newDir gameOver randomGen score novoJogo newBestScore
 
 -- move: responsável por atualizar a posição da cobra no jogo, com base na 
 -- direção de movimento fornecida, e também verificar se a cobra comeu a comida presente na sua nova posição.
@@ -97,8 +98,8 @@ getNewFood stdGen snake
 
 
 -- Define o estado inicial do jogo
-initialGameState :: Bool -> GameState
-initialGameState gameOver =
+initialGameState :: Bool -> Int -> GameState
+initialGameState gameOver bestScore =
     GameState
         { getSnake = initialSnake
         , getFood = (25, 10)
@@ -107,6 +108,7 @@ initialGameState gameOver =
         , getRandomStdGen = mkStdGen 100
         , getScore = 0
         , isNewGame = True
+        , getBestScore = bestScore
         }
   where
     snakeX = cols `div` 2
@@ -119,8 +121,9 @@ initialGameState gameOver =
         , (snakeX - 4, snakeY)
         ]
 
-newGameGameState :: GameState
-newGameGameState =
+
+newGameGameState :: Int -> GameState
+newGameGameState bestScore =
     GameState
         { getSnake = initialSnake
         , getFood = (25, 10)
@@ -129,6 +132,7 @@ newGameGameState =
         , getRandomStdGen = mkStdGen 100
         , getScore = 0
         , isNewGame = True
+        , getBestScore = bestScore
         }
   where
     snakeX = cols `div` 2

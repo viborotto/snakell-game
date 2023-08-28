@@ -93,7 +93,11 @@ render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
                                 color (makeColorI 0 128 0 255) $
                                 translate (-175) (-100) $
                                 scale 0.3 0.3 $
-                                text ("Score: " ++ show (getScore gameState))]
+                                text ("Score: " ++ show (getScore gameState)),
+                                color (makeColorI 0 128 0 255) $
+                                translate (-175) (-150) $
+                                scale 0.2 0.2 $
+                                text ("Best Score: " ++ show (getBestScore gameState))]
                         else []
 
         welcomeMessage = [color darkGreenColor $
@@ -114,7 +118,14 @@ update :: Float -> GameState -> GameState
 update _ gameState
     | isNewGame gameState = gameState
     | gameOver = gameState
-    | otherwise = newGameState (isNewGame gameState) -- Pass the isNewGame field as an argument
+    | otherwise = gameState
+        { getSnake = newSnake
+        , getFood = newFood'
+        , isGameOver = newGameOver
+        , getRandomStdGen = newStdGen
+        , getScore = newScore
+        , getBestScore = newBestScore
+        }
     where
         snake = getSnake gameState
         food = getFood gameState
@@ -130,6 +141,9 @@ update _ gameState
         newScore = if wasFoodEaten
                    then getScore gameState + 1
                    else getScore gameState
+        newBestScore = if newScore > getBestScore gameState
+                       then newScore
+                       else getBestScore gameState
         newGameState = GameState newSnake newFood' direction newGameOver newStdGen newScore
 
 
@@ -154,7 +168,7 @@ handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState
 
 handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
     | isNewGame gameState = gameState { isNewGame = False }
-    | isGameOver gameState = initialGameState False
+    | isGameOver gameState = initialGameState False (max (getBestScore gameState) (getScore gameState))
     | otherwise = gameState
 
 handleKeys _ gameState = gameState
@@ -172,5 +186,6 @@ main = do
 
     -- Play the audio file in a loop
     -- playLoop audioFile
-    play window background 10 newGameGameState render handleKeys update
+    let initialBestScore = 0  -- Set your initial best score here
+    play window background 10 (newGameGameState initialBestScore) render handleKeys update
 
