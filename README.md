@@ -10,6 +10,10 @@ Projeto realizado para avaliação da disciplica de Paradigmas de Programação 
 
 **Video do funcionamento**: <link>
 
+#### Gameplay
+
+![Gameplay gif](gameplay.gif)
+
 **Como Utilizar**           
 - stack build
 - stack run
