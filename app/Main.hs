@@ -39,8 +39,8 @@ instance Monoid GameMessage where
 window :: Display
 window = InWindow "Snakell Game" (840, 680) (200,200)
 
-pipemarioColor :: Color
-pipemarioColor = makeColorI 0 128 0 255
+darkGreenColor :: Color
+darkGreenColor = makeColorI 0 128 0 255
 
 
 drawCircle :: Color -> (Float, Float) -> Float -> Picture
@@ -55,7 +55,7 @@ convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
 
 render :: GameState -> Picture
 render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
-                              shapesContornoJogo ++ (convertToPicture (makeColorI 255 165 0 255) <$> snake) ++
+                              shapesContornoJogo ++ (convertToPicture violet <$> snake) ++
                               fmap (convertToPicture red) [food] ++
                               [foldr mappend mempty gameMessage]
 
@@ -68,10 +68,10 @@ render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
         cloud5 = translate 150 (-150) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
 
         food = getFood gameState
-        shapesContornoJogo = [ fillRectangle pipemarioColor (16, 0) (640, 20)
-                 , fillRectangle pipemarioColor (16, 24) (640, 20)
-                 , fillRectangle pipemarioColor (0, 12) (20, 480)
-                 , fillRectangle pipemarioColor (32, 12) (20, 480) ]
+        shapesContornoJogo = [ fillRectangle darkGreenColor (16, 0) (640, 20)
+                 , fillRectangle darkGreenColor (16, 24) (640, 20)
+                 , fillRectangle darkGreenColor (0, 12) (20, 480)
+                 , fillRectangle darkGreenColor (32, 12) (20, 480) ]
         fillRectangle cor (tx, ty) (w, h) = color cor $
                                                 scale 1 (-1) $
                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
@@ -96,7 +96,11 @@ render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
                                 text ("Score: " ++ show (getScore gameState))]
                         else []
 
-        welcomeMessage = [color black $
+        welcomeMessage = [color darkGreenColor $
+                        translate (-150) 300 $
+                        scale 0.16 0.16 $
+                        text "David Pianura | Vittoria Borotto",
+                        color black $
                         translate (-200) 10 $
                         scale 0.3 0.3 $
                         text "WELCOME TO SNAKELL",
