@@ -28,7 +28,8 @@ dependencies:
 - mtl
 - QuickCheck >= 2.14.3
 - hspec >= 2.7 && < 3
-# - call == 0.1.4.2
+- sdl2 >= 2.0 && < 3
+- sdl2-mixer
 
 ghc-options:
 - -Wall

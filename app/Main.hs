@@ -4,9 +4,8 @@ import Snake
 import Graphics.Gloss ()
     
 import Graphics.Gloss.Interface.Pure.Game
-
--- import Call -- Import the call library
--- import Codec.Audio.OggVorbis -- Import the module for handling Ogg Vorbis audio files
+import qualified SDL
+import qualified SDL.Mixer as Mixer
 
 data GameMessage = GameOverMessage Picture | TryAgainMessage Picture | WelcomeMessage Picture
 
@@ -173,14 +172,17 @@ background = makeColorI 135 206 235 255
 
 main :: IO ()
 main = do
-    -- Load the audio file
-    -- audioFile <- oggFile "toystory.ogg" -- Replace with the actual path to your audio file
+    -- Initialize SDL
+    SDL.initialize [SDL.InitAudio]
 
-    -- Initialize the call library
-    -- initializeCall
-
-    -- Play the audio file in a loop
-    -- playLoop audioFile
+    -- Initialize SDL_mixer
+    Mixer.initialize [Mixer.InitMP3, Mixer.InitOGG]
+    -- Open the audio device
+    Mixer.openAudio Mixer.defaultAudio 256
+    music <- Mixer.load "toystory.ogg"
+    Mixer.play music
     let initialBestScore = 0  -- Set your initial best score here
     play window background 10 (newGameGameState initialBestScore) render handleKeys update
+    Mixer.free music
+    Mixer.quit
 
