@@ -168,7 +168,8 @@ handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState
 
 handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
     | isNewGame gameState = gameState { isNewGame = False }
-    | isGameOver gameState = initialGameState False (max (getBestScore gameState) (getScore gameState))
+    -- funcao de alta ordem max entre os scores
+    | isGameOver gameState = initialGameState False $ max (getBestScore gameState) (getScore gameState)
     | otherwise = gameState
 
 handleKeys _ gameState = gameState
