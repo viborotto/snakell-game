@@ -20,8 +20,8 @@ import Graphics.Gloss
       Picture )
 import Graphics.Gloss.Interface.Pure.Game
 
-import Call -- Import the call library
-import Codec.Audio.OggVorbis -- Import the module for handling Ogg Vorbis audio files
+-- import Call -- Import the call library
+-- import Codec.Audio.OggVorbis -- Import the module for handling Ogg Vorbis audio files
 
 data GameMessage = GameOverMessage Picture | TryAgainMessage Picture | WelcomeMessage Picture
 
@@ -55,7 +55,7 @@ convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
 
 render :: GameState -> Picture
 render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
-                              shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
+                              shapesContornoJogo ++ (convertToPicture (makeColorI 255 165 0 255) <$> snake) ++
                               fmap (convertToPicture red) [food] ++
                               [foldr mappend mempty gameMessage]
 
@@ -161,12 +161,12 @@ background = makeColorI 135 206 235 255
 main :: IO ()
 main = do
     -- Load the audio file
-    audioFile <- oggFile "toystory.ogg" -- Replace with the actual path to your audio file
+    -- audioFile <- oggFile "toystory.ogg" -- Replace with the actual path to your audio file
 
     -- Initialize the call library
-    initializeCall
+    -- initializeCall
 
     -- Play the audio file in a loop
-    playLoop audioFile
+    -- playLoop audioFile
     play window background 10 newGameGameState render handleKeys update
 
