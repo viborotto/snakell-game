@@ -55,8 +55,8 @@ directionVectorMap = Map.fromList
 
 -- Define a mudança de direção no estado do jogo
 changeDirection :: GameState -> Direction -> GameState
-changeDirection (GameState snake food dir gameOver randomGen score isNewGame) newDir =
-    GameState snake food newDir gameOver randomGen score isNewGame
+changeDirection (GameState snake food _ gameOver randomGen score novoJogo) newDir =
+    GameState snake food newDir gameOver randomGen score novoJogo
 
 -- move: responsável por atualizar a posição da cobra no jogo, com base na 
 -- direção de movimento fornecida, e também verificar se a cobra comeu a comida presente na sua nova posição.
@@ -92,10 +92,11 @@ getNewFood stdGen snake
 
 
 -- Define o estado inicial do jogo
+initialGameState :: Bool -> GameState
 initialGameState gameOver =
     GameState
         { getSnake = initialSnake
-        , getFood = (3, 3)
+        , getFood = (25, 10)
         , getDirection = DOWN
         , isGameOver = gameOver
         , getRandomStdGen = mkStdGen 100
@@ -113,10 +114,11 @@ initialGameState gameOver =
         , (snakeX - 4, snakeY)
         ]
 
+newGameGameState :: GameState
 newGameGameState =
     GameState
         { getSnake = initialSnake
-        , getFood = (3, 3)
+        , getFood = (25, 10)
         , getDirection = DOWN
         , isGameOver = False  -- Inicialmente, o jogo não está encerrado
         , getRandomStdGen = mkStdGen 100
