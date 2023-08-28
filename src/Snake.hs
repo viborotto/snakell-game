@@ -7,6 +7,11 @@ module Snake
     , checkGameOver
     , getNewFood
     , newGameGameState
+    , Snake
+    , SnakeBody
+    , Food
+    , cols
+    , rows
     ) where
 
 import Data.Map as Map

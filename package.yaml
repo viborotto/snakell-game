@@ -26,6 +26,8 @@ dependencies:
 - containers
 - transformers
 - mtl
+- QuickCheck >= 2.14.3
+- hspec >= 2.7 && < 3
 # - call == 0.1.4.2
 
 ghc-options:
