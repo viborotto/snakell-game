@@ -2,7 +2,26 @@ module Main (main) where
 
 import Snake
 import Graphics.Gloss
+    ( black,
+      red,
+      yellow,
+      blank,
+      circleSolid,
+      color,
+      pictures,
+      rectangleSolid,
+      scale,
+      text,
+      translate,
+      play,
+      makeColorI,
+      Display(InWindow),
+      Color,
+      Picture )
 import Graphics.Gloss.Interface.Pure.Game
+
+import Call -- Import the call library
+import Codec.Audio.OggVorbis -- Import the module for handling Ogg Vorbis audio files
 
 data GameMessage = GameOverMessage Picture | TryAgainMessage Picture | WelcomeMessage Picture
 
@@ -141,5 +160,13 @@ background = makeColorI 135 206 235 255
 
 main :: IO ()
 main = do
+    -- Load the audio file
+    audioFile <- oggFile "toystory.ogg" -- Replace with the actual path to your audio file
+
+    -- Initialize the call library
+    initializeCall
+
+    -- Play the audio file in a loop
+    playLoop audioFile
     play window background 10 newGameGameState render handleKeys update
 
