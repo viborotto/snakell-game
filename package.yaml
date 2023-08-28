@@ -26,9 +26,6 @@ dependencies:
 - containers
 - transformers
 - mtl
-# - sdl2
-# - sdl2-mixer == 1.2.0.0
-# - gloss-juicy
 
 ghc-options:
 - -Wall
