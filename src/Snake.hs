@@ -107,10 +107,10 @@ initialGameState gameOver =
     snakeY = rows `div` 2
     initialSnake =
         [ (snakeX, snakeY)
-        , (snakeX, snakeY - 1)
-        , (snakeX, snakeY - 2)
-        , (snakeX - 1, snakeY - 2)
-        , (snakeX - 2, snakeY - 2)
+        , (snakeX - 1, snakeY)
+        , (snakeX - 2, snakeY)
+        , (snakeX - 3, snakeY)  -- Añade más coordenadas aquí para una serpiente más larga
+        , (snakeX - 4, snakeY)
         ]
 
 newGameGameState =
@@ -128,8 +128,8 @@ newGameGameState =
     snakeY = rows `div` 2
     initialSnake =
         [ (snakeX, snakeY)
-        , (snakeX, snakeY - 1)
-        , (snakeX, snakeY - 2)
-        , (snakeX - 1, snakeY - 2)
-        , (snakeX - 2, snakeY - 2)
+        , (snakeX - 1, snakeY)
+        , (snakeX - 2, snakeY)
+        , (snakeX - 3, snakeY)  -- Añade más coordenadas aquí para una serpiente más larga
+        , (snakeX - 4, snakeY)
         ]

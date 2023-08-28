@@ -18,7 +18,7 @@ instance Monoid GameMessage where
     mempty = WelcomeMessage blank
 
 window :: Display
-window = InWindow "Snakell Game" (640, 480) (100, 100)
+window = InWindow "Snakell Game" (840, 680) (200,200)
 
 pipemarioColor :: Color
 pipemarioColor = makeColorI 0 128 0 255
@@ -70,7 +70,7 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                         else []
 
         welcomeMessage = [color black $
-                        translate (-200) 0 $
+                        translate (-200) 10 $
                         scale 0.3 0.3 $
                         text "WELCOME TO SNAKELL",
                         color black $
