@@ -23,8 +23,6 @@ window = InWindow "Snakell Game" (640, 480) (100, 100)
 pipemarioColor :: Color
 pipemarioColor = makeColorI 0 128 0 255
 
-loadSnakeImage :: IO Picture
-loadSnakeImage = loadBMP "star.bmp"
 
 drawCircle :: Color -> (Float, Float) -> Float -> Picture
 drawCircle cor (tx, ty) radius = color cor $
@@ -35,36 +33,6 @@ convertToPicture :: Color -> (Int, Int) -> Picture
 convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
     where
         toFloat (coordX, coordY) = (fromIntegral coordX, fromIntegral coordY)
-
--- render :: GameState -> Picture
--- render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
---                               fmap (convertToPicture red) [food] ++
---                               [foldr mappend mempty gameOverMessage]
---   where snake = getSnake gameState
---         food = getFood gameState
---         shapesContornoJogo = [ fillRectangle pipemarioColor (16, 0) (640, 20)
---                  , fillRectangle pipemarioColor (16, 24) (640, 20)
---                  , fillRectangle pipemarioColor (0, 12) (20, 480)
---                  , fillRectangle pipemarioColor (32, 12) (20, 480) ]
---         fillRectangle cor (tx, ty) (w, h) = color cor $
---                                                 scale 1 (-1) $
---                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
---                                                 rectangleSolid w h
-        -- gameOverMessage = if isGameOver gameState
-        --                   then [color black $
-        --                         translate (-200) 0 $
-        --                         scale 0.5 0.5 $
-        --                         text "GAME OVER",
-        --                         color black $
-        --                         translate (-175) (-50) $
-        --                         scale 0.2 0.2 $
-        --                         text "PRESS SPACE TO TRY AGAIN.",
-        --                         color (makeColorI 0 128 0 255) $
-        --                         translate (-175) (-100) $
-        --                         scale 0.3 0.3 $
-        --                         text ("Score: " ++ show (getScore gameState))]
-        --                   else []
-
 
 render :: GameState -> Picture
 render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
@@ -81,12 +49,10 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
                                                 scale 1 (-1) $
                                                 translate (tx * 20 - 320) (ty * 20 - 240) $
                                                 rectangleSolid w h
-        
-        gameMessage = if isGameOver gameState
-                  then gameOverMessage
-                  else if isNewGame gameState
-                       then welcomeMessage
-                       else []
+        gameMessage
+          | isGameOver gameState = gameOverMessage
+          | isNewGame gameState = welcomeMessage
+          | otherwise = []
 
         gameOverMessage = if isGameOver gameState
                           then [color black $
@@ -105,14 +71,13 @@ render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$>
 
         welcomeMessage = [color black $
                         translate (-200) 0 $
-                        scale 0.2 0.2 $
+                        scale 0.3 0.3 $
                         text "WELCOME TO SNAKELL",
                         color black $
                         translate (-175) (-50) $
                         scale 0.2 0.2 $
                         text "PRESS SPACE TO PLAY"]
 
-        isNewGame = not . isGameOver
 
 update :: Float -> GameState -> GameState
 update _ gameState
@@ -156,10 +121,6 @@ handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gameState
     | getDirection gameState /= DOWN = changeDirection gameState UP
     | otherwise                      =  gameState
 
--- handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
---     | isGameOver gameState = initialGameState False
---     | otherwise            = gameState
-
 handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
     | isNewGame gameState = gameState { isNewGame = False }
     | isGameOver gameState = initialGameState False
@@ -167,14 +128,10 @@ handleKeys (EventKey (SpecialKey KeySpace) Down _ _) gameState
 
 handleKeys _ gameState = gameState
 
-loadBackgroundImage :: IO Picture
-loadBackgroundImage = loadBMP "sky.bmp"
-
 background :: Color
 background = makeColorI 135 206 235 255
 
 main :: IO ()
 main = do
     play window background 10 newGameGameState render handleKeys update
-    
-    
+

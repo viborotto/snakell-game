@@ -113,7 +113,6 @@ initialGameState gameOver =
         , (snakeX - 2, snakeY - 2)
         ]
 
-newGameGameState :: GameState
 newGameGameState =
     GameState
         { getSnake = initialSnake
