@@ -54,18 +54,28 @@ convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
         toFloat (coordX, coordY) = (fromIntegral coordX, fromIntegral coordY)
 
 render :: GameState -> Picture
-render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
+render gameState = pictures $ [drawHaskellLogo, cloud1, cloud2, cloud3, cloud4, cloud5] ++
                               shapesContornoJogo ++ (convertToPicture violet <$> snake) ++
-                              fmap (convertToPicture red) [food] ++
+                              [foodPicture] ++
                               [foldr mappend mempty gameMessage]
 
   where snake = getSnake gameState
-        cloud1, cloud2, cloud3, cloud4, cloud5 :: Picture
+        cloud1, cloud2, cloud3, cloud4, cloud5, drawHaskellLogo, foodPicture :: Picture
         cloud1 = translate (-100) 150 $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
         cloud2 = translate (-240) 50 $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
         cloud3 = translate 150 (200) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
         cloud4 = translate (-200) (-200) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
         cloud5 = translate 150 (-150) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
+        drawHaskellLogo = color violet $ translate (-25) 270 $ scale 0.2 0.2 $ text ">>="
+        foodPicture = pictures [convertToPicture red food, translateFoodText]
+            where
+                (foodX, foodY) = getFood gameState
+                foodText = "<*>"  -- texto para dentro do circulo da comida
+                (circleTx, circleTy) = (fromIntegral foodX * 20 - 320, fromIntegral foodY * 20 - 240)
+                textWidth = 17
+                textHeight = 8
+                (textTx, textTy) = (circleTx - textWidth / 2, circleTy - textHeight / 2)
+                translateFoodText = translate textTx textTy $ scale 0.07 0.07 $ color white $ text foodText
 
         food = getFood gameState
         shapesContornoJogo = [ fillRectangle darkGreenColor (16, 0) (640, 20)

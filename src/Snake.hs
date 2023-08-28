@@ -117,7 +117,7 @@ initialGameState gameOver bestScore =
         [ (snakeX, snakeY)
         , (snakeX - 1, snakeY)
         , (snakeX - 2, snakeY)
-        , (snakeX - 3, snakeY)  -- Añade más coordenadas aquí para una serpiente más larga
+        , (snakeX - 3, snakeY)
         , (snakeX - 4, snakeY)
         ]
 
