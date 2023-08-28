@@ -41,7 +41,7 @@ data GameState = GameState
     , getRandomStdGen :: StdGen
     , getScore :: Int
     , isNewGame :: Bool
-    , getBestScore :: Int  -- Add the bestScore field
+    , getBestScore :: Int
     }
 
 {--CONSTANTES--}

@@ -17,6 +17,11 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
+
+# AVISO:
+# Iniciamos o projeto em um repositório pessoal (antes de terem sido criados os repositórios para os projetos da turma),
+# portanto, no nosso repositório de entrega constam poucos commits. 
+# link para o nosso repositório pessoal: https://github.com/viborotto/snakell-game.git
 description:         Please see the README on GitHub at <https://github.com/ufabc-bcc/23-q2-paradigmas-projetos-snakell#readme>
 
 dependencies:
