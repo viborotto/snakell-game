@@ -35,11 +35,19 @@ convertToPicture cor (x, y) = drawCircle cor (toFloat (x, y)) 10
         toFloat (coordX, coordY) = (fromIntegral coordX, fromIntegral coordY)
 
 render :: GameState -> Picture
-render gameState = pictures $ shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
+render gameState = pictures $ [cloud1, cloud2, cloud3, cloud4, cloud5] ++
+                              shapesContornoJogo ++ (convertToPicture yellow <$> snake) ++
                               fmap (convertToPicture red) [food] ++
                               [foldr mappend mempty gameMessage]
 
   where snake = getSnake gameState
+        cloud1, cloud2, cloud3, cloud4, cloud5 :: Picture
+        cloud1 = translate (-100) 150 $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
+        cloud2 = translate (-240) 50 $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
+        cloud3 = translate 150 (200) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
+        cloud4 = translate (-200) (-200) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
+        cloud5 = translate 150 (-150) $ scale 0.4 0.4 $ color white $ pictures [ translate 0 20 $ circleSolid 20, translate 20 20 $ circleSolid 30, translate (-20) 20 $ circleSolid 30, translate 0 0 $ circleSolid 40, translate 40 0 $ circleSolid 30, translate (-40) 0 $ circleSolid 30]
+
         food = getFood gameState
         shapesContornoJogo = [ fillRectangle pipemarioColor (16, 0) (640, 20)
                  , fillRectangle pipemarioColor (16, 24) (640, 20)
